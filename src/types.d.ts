@@ -281,6 +281,8 @@ export interface Content extends Omit<Headline, 'classes'>, Widget {
   columns?: number;
   isReversed?: boolean;
   isAfterContent?: boolean;
+  /** Center the text and stack each item's icon above it; uses the full width (no image column). */
+  isCentered?: boolean;
   callToAction?: CallToAction;
 }
 
@@ -404,6 +406,8 @@ export interface Poem {
   /** One string per stanza; line breaks inside a stanza are kept. */
   stanzas: Array<string>;
   themes?: Array<string>;
+  /** Background shown while this poem is in the middle of the screen (decorative). */
+  image?: Image;
 }
 
 export interface ParallaxPoems extends Omit<Headline, 'classes'>, Pick<Widget, 'id'> {

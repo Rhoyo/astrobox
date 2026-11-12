@@ -3,10 +3,11 @@ import Image from '~/components/common/Image.astro';
 import type { ParallaxPoems as Props } from '~/types';
 
 // Poems scrolling over a pinned background image that drifts upward more
-// slowly than the text (parallax). The background is `position: sticky`, so
-// without JavaScript, or with reduced motion, it simply stays in place;
-// <aw-parallax> only adds the drift by updating the `--aw-parallax` progress
-// variable (0 → 1) while the section is on screen.
+// slowly than the text (parallax). Each poem can bring its own background,
+// which fades in while that poem is in the middle of the screen. The
+// background is `position: sticky`, so without JavaScript it simply stays in
+// place and shows the section image; <aw-parallax> adds the drift (through
+// the `--aw-parallax` progress variable, 0 → 1) and the per-poem switch.
 
 const {
   title = await Astro.slots.render('title'),
@@ -22,28 +23,54 @@ const themes = [...new Set(poems.flatMap((poem) => poem.themes ?? []))].sort();
 ---
 
 <aw-parallax id={id} class="relative block isolate bg-slate-950 text-white">
-  <div class="sticky top-0 h-screen -mb-[100vh] overflow-hidden -z-10" aria-hidden="true">
-    {
-      image && (
-        <div class="aw-parallax-layer absolute inset-x-0 top-0 h-[140vh]">
-          <Image
-            src={image.src}
-            alt=""
-            layout="cover"
-            widths={[800, 1600]}
-            sizes="100vw"
-            width={1600}
-            height={2000}
-            loading="eager"
-            class="h-full w-full object-cover"
-          />
-        </div>
-      )
-    }
-    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/50 to-slate-950/80"></div>
+  <!-- Track as tall as the section: the background stays pinned while the poems
+       scroll and leaves exactly when the section ends. -->
+  <div class="absolute inset-0 -z-10" aria-hidden="true">
+    <div class="sticky top-0 h-screen overflow-hidden">
+      <div class="aw-parallax-layer absolute inset-x-0 top-0 h-[140vh]">
+        {
+          image && (
+            <Image
+              src={image.src}
+              alt=""
+              layout="cover"
+              widths={[800, 1600]}
+              sizes="100vw"
+              width={1600}
+              height={2000}
+              loading="eager"
+              class="absolute inset-0 h-full w-full object-cover"
+            />
+          )
+        }
+        {
+          poems.map(
+            ({ image: poemImage }, index) =>
+              poemImage && (
+                <div
+                  data-aw-bg={index}
+                  class="absolute inset-0 opacity-0 transition-opacity duration-700 motion-reduce:transition-none data-active:opacity-100"
+                >
+                  <Image
+                    src={poemImage.src}
+                    alt=""
+                    layout="cover"
+                    widths={[800, 1600]}
+                    sizes="100vw"
+                    width={1600}
+                    height={2000}
+                    class="h-full w-full object-cover"
+                  />
+                </div>
+              )
+          )
+        }
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/35 to-slate-950/60"></div>
+    </div>
   </div>
 
-  <header class="min-h-[85vh] flex flex-col items-center justify-center px-4 py-24 text-center">
+  <header data-aw-poem="-1" class="min-h-[85vh] flex flex-col items-center justify-center px-4 py-24 text-center">
     {tagline && <p class="text-sm font-semibold uppercase tracking-[0.3em] text-white/70" set:html={tagline} />}
     {
       title && (
@@ -70,8 +97,8 @@ const themes = [...new Set(poems.flatMap((poem) => poem.themes ?? []))].sort();
 
   <ol class="list-none px-4 pb-32">
     {
-      poems.map(({ title: poemTitle, year, source, stanzas, themes: poemThemes = [] }) => (
-        <li class="min-h-[90vh] flex items-center justify-center py-16">
+      poems.map(({ title: poemTitle, year, source, stanzas, themes: poemThemes = [] }, index) => (
+        <li data-aw-poem={index} class="min-h-[90vh] flex items-center justify-center py-16">
           <article class="w-full max-w-xl rounded-2xl border border-white/15 bg-slate-950/45 p-8 md:p-12 shadow-2xl backdrop-blur-md intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
             <header>
               <h2 class="font-serif text-3xl md:text-4xl font-bold">{poemTitle}</h2>
@@ -124,6 +151,16 @@ const themes = [...new Set(poems.flatMap((poem) => poem.themes ?? []))].sort();
 <script>
   class AwParallax extends HTMLElement {
     frame = 0;
+    observer?: IntersectionObserver;
+    // Show the background of the poem crossing the middle of the screen.
+    onIntersect = (entries: IntersectionObserverEntry[]) => {
+      const entry = entries.find((e) => e.isIntersecting);
+      if (!entry) return;
+      const active = (entry.target as HTMLElement).dataset.awPoem;
+      this.querySelectorAll<HTMLElement>('[data-aw-bg]').forEach((layer) =>
+        layer.toggleAttribute('data-active', layer.dataset.awBg === active)
+      );
+    };
     onScroll = () => {
       cancelAnimationFrame(this.frame);
       this.frame = requestAnimationFrame(() => {
@@ -134,12 +171,15 @@ const themes = [...new Set(poems.flatMap((poem) => poem.themes ?? []))].sort();
       });
     };
     connectedCallback() {
+      this.observer = new IntersectionObserver(this.onIntersect, { rootMargin: '-50% 0px -50% 0px' });
+      this.querySelectorAll('[data-aw-poem]').forEach((item) => this.observer?.observe(item));
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       window.addEventListener('scroll', this.onScroll, { passive: true });
       window.addEventListener('resize', this.onScroll, { passive: true });
       this.onScroll();
     }
     disconnectedCallback() {
+      this.observer?.disconnect();
       window.removeEventListener('scroll', this.onScroll);
       window.removeEventListener('resize', this.onScroll);
       cancelAnimationFrame(this.frame);

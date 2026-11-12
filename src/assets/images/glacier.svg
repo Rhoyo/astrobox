@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f8ea8"/>
+      <stop offset="0.5" stop-color="#b9cfdc"/>
+      <stop offset="1" stop-color="#e8eff3"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f6f86"/>
+      <stop offset="1" stop-color="#0f2533"/>
+    </linearGradient>
+    <linearGradient id="ice" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4fbff"/>
+      <stop offset="1" stop-color="#8fc3dc"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="2000" fill="url(#sky)"/>
+
+  <!-- distant mountains -->
+  <path d="M0 760 L180 560 L320 690 L470 520 L640 700 L820 540 L980 690 L1150 500 L1330 680 L1480 580 L1600 660 L1600 900 L0 900 Z" fill="#9db4c4"/>
+  <path d="M470 520 L520 580 L490 575 L450 600 Z M1150 500 L1205 565 L1170 560 L1130 585 Z M180 560 L230 615 L200 612 L160 640 Z" fill="#eef4f7"/>
+
+  <!-- glacier top surface -->
+  <path d="M0 780 C 300 740 600 770 900 745 C 1200 720 1400 750 1600 735 L1600 820 L0 840 Z" fill="#f2f7fa"/>
+
+  <!-- glacier face: facets -->
+  <g>
+    <polygon points="0,840 140,830 160,1280 0,1290" fill="#bfe0ef"/>
+    <polygon points="140,830 300,822 280,1275 160,1280" fill="#9fd0e6"/>
+    <polygon points="300,822 470,815 500,1272 280,1275" fill="#cfe9f4"/>
+    <polygon points="470,815 620,810 600,1270 500,1272" fill="#86c1dc"/>
+    <polygon points="620,810 800,805 820,1268 600,1270" fill="#b4dbec"/>
+    <polygon points="800,805 930,803 960,1268 820,1268" fill="#7bb6d3"/>
+    <!-- calving notch -->
+    <polygon points="930,803 1090,800 1060,1268 960,1268" fill="#5a9cc0"/>
+    <polygon points="1090,800 1250,798 1240,1270 1060,1268" fill="#a8d5ea"/>
+    <polygon points="1250,798 1420,800 1440,1272 1240,1270" fill="#c7e6f3"/>
+    <polygon points="1420,800 1600,805 1600,1275 1440,1272" fill="#94cbe3"/>
+  </g>
+
+  <!-- crevasses -->
+  <g stroke="#3d7fa5" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.55">
+    <path d="M220 860 L210 1010 L235 1160"/>
+    <path d="M390 850 L405 980"/>
+    <path d="M700 840 L690 1000 L712 1120"/>
+    <path d="M1170 830 L1180 960 L1160 1100"/>
+    <path d="M1350 840 L1335 990"/>
+    <path d="M1520 850 L1530 1050"/>
+  </g>
+  <path d="M0 1240 L1600 1238 L1600 1275 L0 1290 Z" fill="#5f9fc2" opacity="0.5"/>
+
+  <!-- falling chunks -->
+  <g>
+    <polygon points="960,900 1050,890 1070,1010 975,1030" fill="#e6f5fc"/>
+    <polygon points="975,1030 1070,1010 1060,1040 985,1055" fill="#7fb9d6"/>
+    <polygon points="1010,1090 1080,1080 1095,1160 1020,1175" fill="#d4eef9"/>
+    <polygon points="920,1120 960,1112 970,1165 930,1172" fill="#c2e4f3"/>
+  </g>
+
+  <!-- sea -->
+  <rect y="1270" width="1600" height="730" fill="url(#sea)"/>
+
+  <!-- splash -->
+  <g fill="#ffffff">
+    <path d="M880 1280 C 900 1200 940 1180 960 1240 C 985 1150 1030 1140 1050 1230 C 1075 1170 1120 1180 1130 1280 Z" opacity="0.9"/>
+    <circle cx="905" cy="1190" r="10" opacity="0.8"/>
+    <circle cx="1110" cy="1160" r="12" opacity="0.8"/>
+    <circle cx="1010" cy="1110" r="8" opacity="0.7"/>
+  </g>
+  <ellipse cx="1005" cy="1300" rx="210" ry="22" fill="#d9eef7" opacity="0.6"/>
+
+  <!-- floating ice -->
+  <g>
+    <polygon points="160,1420 300,1405 330,1440 140,1450" fill="#e3f2f9"/>
+    <polygon points="140,1450 330,1440 300,1470 170,1475" fill="#5e98b6" opacity="0.7"/>
+    <polygon points="1260,1500 1420,1485 1460,1525 1240,1535" fill="#eef8fc"/>
+    <polygon points="1240,1535 1460,1525 1420,1560 1270,1565" fill="#5e98b6" opacity="0.7"/>
+    <polygon points="620,1620 700,1612 715,1635 610,1640" fill="#dceff7"/>
+  </g>
+
+  <!-- reflections -->
+  <g stroke="#cfe6f1" stroke-width="3" opacity="0.25">
+    <line x1="80" y1="1340" x2="420" y2="1340"/>
+    <line x1="560" y1="1380" x2="860" y2="1380"/>
+    <line x1="1180" y1="1360" x2="1520" y2="1360"/>
+    <line x1="300" y1="1560" x2="560" y2="1560"/>
+    <line x1="900" y1="1700" x2="1250" y2="1700"/>
+  </g>
+</svg>

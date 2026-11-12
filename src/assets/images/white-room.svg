@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="back" cx="0.5" cy="0.45" r="0.7">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eceae6"/>
+    </radialGradient>
+    <linearGradient id="leftWall" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d6d3ce"/>
+      <stop offset="1" stop-color="#f3f1ee"/>
+    </linearGradient>
+    <linearGradient id="rightWall" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#dcd9d4"/>
+      <stop offset="1" stop-color="#f5f3f0"/>
+    </linearGradient>
+    <linearGradient id="ceiling" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2dfda"/>
+      <stop offset="1" stop-color="#f7f6f3"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#cfcbc4"/>
+      <stop offset="1" stop-color="#ebe8e3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- back wall: 480..1120 x 640..1360 -->
+  <polygon points="0,0 1600,0 1120,640 480,640" fill="url(#ceiling)"/>
+  <polygon points="0,0 480,640 480,1360 0,2000" fill="url(#leftWall)"/>
+  <polygon points="1600,0 1600,2000 1120,1360 1120,640" fill="url(#rightWall)"/>
+  <polygon points="0,2000 480,1360 1120,1360 1600,2000" fill="url(#floor)"/>
+  <rect x="480" y="640" width="640" height="720" fill="url(#back)"/>
+
+  <!-- soft corner shading -->
+  <g fill="none" stroke-linecap="round">
+    <g stroke="#c4c0b9" stroke-width="3" opacity="0.7">
+      <line x1="0" y1="0" x2="480" y2="640"/>
+      <line x1="1600" y1="0" x2="1120" y2="640"/>
+      <line x1="0" y1="2000" x2="480" y2="1360"/>
+      <line x1="1600" y1="2000" x2="1120" y2="1360"/>
+    </g>
+    <rect x="480" y="640" width="640" height="720" stroke="#d2cec8" stroke-width="3"/>
+  </g>
+
+  <!-- skirting -->
+  <polygon points="480,1340 1120,1340 1120,1360 480,1360" fill="#e4e1dc"/>
+
+  <!-- light falloff from above -->
+  <ellipse cx="800" cy="1000" rx="320" ry="300" fill="#ffffff" opacity="0.35"/>
+</svg>
