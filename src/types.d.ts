@@ -395,6 +395,24 @@ export interface Gallery extends Omit<Headline, 'classes'>, Widget {
   lightbox?: boolean;
 }
 
+export interface Poem {
+  title: string;
+  /** Year of first publication. */
+  year?: number | string;
+  /** Collection or periodical the poem first appeared in. */
+  source?: string;
+  /** One string per stanza; line breaks inside a stanza are kept. */
+  stanzas: Array<string>;
+  themes?: Array<string>;
+}
+
+export interface ParallaxPoems extends Omit<Headline, 'classes'>, Pick<Widget, 'id'> {
+  /** Background image; it drifts more slowly than the poems scrolling over it. */
+  image?: Image;
+  author?: string;
+  poems?: Array<Poem>;
+}
+
 export interface Project {
   title?: string;
   description?: string;

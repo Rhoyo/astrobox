@@ -71,6 +71,10 @@ Images accept `{ src, alt }` where `src` is a local import (`~/assets/images/...
 
 `BlogLatestPosts` and `BlogHighlightedPosts` (`title`, `information`, `count` / `postIds`, `linkText`, `linkUrl`) list posts from `src/data/post/`.
 
+### Showcase
+
+`ParallaxPoems` (`title`, `subtitle`, `tagline`, `author`, `image`, `poems[{ title, year?, source?, stanzas[], themes[] }]`) renders poems as cards scrolling over a pinned background image that drifts at a slower speed (`<aw-parallax>`; static without JS or with reduced motion). It renders the page `<h1>`. Demo: `/`.
+
 ## Rules of thumb
 
 - Use the widget as it is; do not fork it to change one class. `classes` and the `bg` slot cover most layout needs.

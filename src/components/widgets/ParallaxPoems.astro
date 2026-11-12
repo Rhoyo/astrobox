@@ -1,0 +1,149 @@
+---
+import Image from '~/components/common/Image.astro';
+import type { ParallaxPoems as Props } from '~/types';
+
+// Poems scrolling over a pinned background image that drifts upward more
+// slowly than the text (parallax). The background is `position: sticky`, so
+// without JavaScript, or with reduced motion, it simply stays in place;
+// <aw-parallax> only adds the drift by updating the `--aw-parallax` progress
+// variable (0 → 1) while the section is on screen.
+
+const {
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+  image,
+  poems = [],
+  author,
+  id,
+} = Astro.props;
+
+const themes = [...new Set(poems.flatMap((poem) => poem.themes ?? []))].sort();
+---
+
+<aw-parallax id={id} class="relative block isolate bg-slate-950 text-white">
+  <div class="sticky top-0 h-screen -mb-[100vh] overflow-hidden -z-10" aria-hidden="true">
+    {
+      image && (
+        <div class="aw-parallax-layer absolute inset-x-0 top-0 h-[140vh]">
+          <Image
+            src={image.src}
+            alt=""
+            layout="cover"
+            widths={[800, 1600]}
+            sizes="100vw"
+            width={1600}
+            height={2000}
+            loading="eager"
+            class="h-full w-full object-cover"
+          />
+        </div>
+      )
+    }
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/50 to-slate-950/80"></div>
+  </div>
+
+  <header class="min-h-[85vh] flex flex-col items-center justify-center px-4 py-24 text-center">
+    {tagline && <p class="text-sm font-semibold uppercase tracking-[0.3em] text-white/70" set:html={tagline} />}
+    {
+      title && (
+        <h1
+          class="mt-4 font-serif text-5xl md:text-7xl font-bold tracking-tight drop-shadow-lg [text-wrap:balance]"
+          set:html={title}
+        />
+      )
+    }
+    {subtitle && <p class="mt-6 max-w-xl text-lg md:text-xl text-white/80 [text-wrap:balance]" set:html={subtitle} />}
+    {
+      themes.length > 0 && (
+        <ul class="mt-10 flex max-w-2xl flex-wrap justify-center gap-2 list-none" aria-label="Themes">
+          {themes.map((theme) => (
+            <li class="rounded-full border border-white/30 px-3 py-1 text-xs uppercase tracking-wider text-white/80">
+              {theme}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <span class="mt-16 text-white/60 text-sm motion-safe:animate-bounce" aria-hidden="true">Scroll ↓</span>
+  </header>
+
+  <ol class="list-none px-4 pb-32">
+    {
+      poems.map(({ title: poemTitle, year, source, stanzas, themes: poemThemes = [] }) => (
+        <li class="min-h-[90vh] flex items-center justify-center py-16">
+          <article class="w-full max-w-xl rounded-2xl border border-white/15 bg-slate-950/45 p-8 md:p-12 shadow-2xl backdrop-blur-md intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+            <header>
+              <h2 class="font-serif text-3xl md:text-4xl font-bold">{poemTitle}</h2>
+              {(author || year || source) && (
+                <p class="mt-2 text-sm text-white/60">
+                  {[author, source && <cite class="not-italic">{source}</cite>, year].filter(Boolean).map((part, i) => (
+                    <>
+                      {i > 0 && ' · '}
+                      {part}
+                    </>
+                  ))}
+                </p>
+              )}
+            </header>
+
+            <div class="mt-8 space-y-6 font-serif text-lg md:text-xl leading-relaxed text-white/90">
+              {stanzas.map((stanza) => (
+                <p class="whitespace-pre-line">{stanza}</p>
+              ))}
+            </div>
+
+            {poemThemes.length > 0 && (
+              <ul class="mt-8 flex flex-wrap gap-2 list-none" aria-label={`Themes of ${poemTitle}`}>
+                {poemThemes.map((theme) => (
+                  <li class="rounded-full bg-white/10 px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/80">
+                    #{theme}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        </li>
+      ))
+    }
+  </ol>
+</aw-parallax>
+
+<style>
+  .aw-parallax-layer {
+    transform: translate3d(0, calc(var(--aw-parallax, 0) * -40vh), 0);
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .aw-parallax-layer {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  class AwParallax extends HTMLElement {
+    frame = 0;
+    onScroll = () => {
+      cancelAnimationFrame(this.frame);
+      this.frame = requestAnimationFrame(() => {
+        const { top, height } = this.getBoundingClientRect();
+        const range = Math.max(height - window.innerHeight, 1);
+        const progress = Math.min(Math.max(-top / range, 0), 1);
+        this.style.setProperty('--aw-parallax', progress.toFixed(4));
+      });
+    };
+    connectedCallback() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      window.addEventListener('scroll', this.onScroll, { passive: true });
+      window.addEventListener('resize', this.onScroll, { passive: true });
+      this.onScroll();
+    }
+    disconnectedCallback() {
+      window.removeEventListener('scroll', this.onScroll);
+      window.removeEventListener('resize', this.onScroll);
+      cancelAnimationFrame(this.frame);
+    }
+  }
+  if (!customElements.get('aw-parallax')) customElements.define('aw-parallax', AwParallax);
+</script>
